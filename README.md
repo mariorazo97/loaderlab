@@ -1,4 +1,5 @@
 # ⚗️ LoaderLab: The Ultimate UI Showcase
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support%20my%20work-FFDD00?style=flat&logo=buy-me-a-coffee&logoColor=white)](https://buymeacoffee.com/quizmybrai7)
 
 <div align="center">
 
@@ -86,3 +87,11 @@ Feel free to fork this repository and add your own loaders!
 If you found this useful or cool, please give it a ⭐!
 
 </div>
+
+## ☕ Support the Project
+
+If you found this tool useful, you can buy me a coffee to keep me awake while I code the next feature!
+
+<a href="https://buymeacoffee.com/quizmybrai7">
+  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="180" />
+</a>
