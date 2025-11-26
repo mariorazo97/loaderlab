@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light"> 
+    <title>LoaderLab | UI Showcase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* =========================================
+           THEME: CLEAN LAB (Light Mode)
+           ========================================= */
+        :root {
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-primary: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-teal: #14b8a6;
+            --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-stack);
+            min-height: 100vh;
+            padding: 2rem;
+            /* Subtle Grid Pattern */
+            background-image: 
+                linear-gradient(rgba(203, 213, 225, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(203, 213, 225, 0.3) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* =========================================
+           HEADER & GITHUB BUTTONS
+           ========================================= */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .title-group h1 {
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-main), var(--accent-primary));
+            background-clip: text;          /* The standard property */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.25rem;
+        }
+
+        .title-group p { color: var(--text-muted); font-size: 1.1rem; }
+
+        .github-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .gh-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #24292f;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .gh-btn:hover { background: #1b1f24; transform: translateY(-2px); }
+        .gh-btn i { font-size: 1rem; }
+
+        /* =========================================
+           GRID SYSTEM
+           ========================================= */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 320px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent-primary);
+        }
+
+        .tier-badge {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .tier-1 { background: #e0f2fe; color: #0369a1; }
+        .tier-2 { background: #f0fdf4; color: #15803d; }
+        .tier-3 { background: #faf5ff; color: #7e22ce; }
+
+        .card h3 { margin-bottom: 2rem; font-size: 1.25rem; }
+
+        /* Mini Preview Container in Card */
+        .preview-box {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            /* Scale down animations for preview */
+            transform: scale(0.8); 
+        }
+
+        .check-btn {
+            width: 100%;
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .check-btn:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        /* =========================================
+           MODAL SYSTEM
+           ========================================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 24px;
+            padding: 3rem;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-overlay.active .modal-content { transform: scale(1); }
+
+        .close-modal {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: #f1f5f9;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .close-modal:hover { background: #e2e8f0; color: var(--text-main); }
+
+        /* Container inside modal where we inject the loader */
+        #modal-loader-stage {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .vote-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .big-vote-btn {
+            background: linear-gradient(135deg, #f43f5e, #e11d48);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(225, 29, 72, 0.3);
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .big-vote-btn:hover { transform: translateY(-2px) scale(1.05); }
+        .big-vote-btn:active { transform: scale(0.95); }
+
+        .modal-vote-count {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            min-width: 60px;
+        }
+
+        /* =========================================
+           LOADER STYLES (Reused)
+           ========================================= */
+        /* Loader 1 */
+        .loader-ring {
+            width: 60px; height: 60px;
+            border: 5px solid #e2e8f0; border-top: 5px solid var(--accent-primary);
+            border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Loader 2 */
+        .loader-dots { display: flex; gap: 8px; }
+        .dot {
+            width: 14px; height: 14px; background-color: var(--text-main);
+            border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        /* Loader 3 */
+        /* =========================================
+           LOADER 3: GOOEY EFFECT (Polish)
+           Fix: Removed white background to allow Alpha-channel contrast
+           ========================================= */
+           .gooey-container {
+            width: 120px;
+            height: 120px;
+            /* FIX: Background must be transparent for contrast to work on Alpha */
+            background: transparent; 
+            filter: contrast(20);
+            position: relative;
+            /* FIX: Ensure container is large enough so blur doesn't clip */
+            overflow: visible; 
+        }
+
+        .gooey-dot {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            top: 48px;
+            left: 48px;
+            filter: blur(3px);
+            /* FIX: Use a darker color to ensure it survives the high contrast filter */
+            background: var(--accent-primary);
+            border-radius: 50%;
+            animation: orbit 2.5s infinite linear;
+        }
+
+        .gooey-dot:nth-child(1) { animation-delay: 0s; }
+        .gooey-dot:nth-child(2) { animation-delay: -0.5s; }
+        .gooey-dot:nth-child(3) { animation-delay: -1.0s; }
+        .gooey-dot:nth-child(4) { animation-delay: -1.5s; }
+        .gooey-dot:nth-child(5) { animation-delay: -2.0s; }
+
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(35px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(35px) rotate(-360deg); }
+        }
+
+        /* Loader 4 */
+        .liquid-morph {
+            width: 80px; height: 80px;
+            background: linear-gradient(45deg, var(--accent-teal), #2dd4bf);
+            animation: morph 3s ease-in-out infinite;
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            box-shadow: 0 10px 20px rgba(13, 148, 136, 0.3);
+        }
+        @keyframes morph {
+            0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+            100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+        }
+
+        /* Loader 5 */
+        .scene { width: 80px; height: 80px; perspective: 600px; }
+        .cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: rotate 4s infinite linear; }
+        .face {
+            position: absolute; width: 80px; height: 80px;
+            background: rgba(147, 51, 234, 0.1); border: 2px solid var(--accent-purple);
+            backface-visibility: hidden;
+        }
+        .front { transform: rotateY(0deg) translateZ(40px); }
+        .back { transform: rotateY(180deg) translateZ(40px); }
+        .right { transform: rotateY(90deg) translateZ(40px); }
+        .left { transform: rotateY(-90deg) translateZ(40px); }
+        .top { transform: rotateX(90deg) translateZ(40px); }
+        .bottom { transform: rotateX(-90deg) translateZ(40px); }
+        .inner-cube {
+            position: absolute; width: 40px; height: 40px; top: 20px; left: 20px;
+            background: var(--accent-purple); transform-style: preserve-3d;
+            transform: translateZ(0); animation: rotate-reverse 4s infinite linear;
+        }
+        @keyframes rotate { 0% { transform: rotateX(0) rotateY(0); } 100% { transform: rotateX(360deg) rotateY(360deg); } }
+        @keyframes rotate-reverse { 0% { transform: rotateX(360deg) rotateY(360deg); } 100% { transform: rotateX(0) rotateY(0); } }
+
+        /* Loader 6 */
+        canvas { border-radius: 50%; background: #f8fafc; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="title-group">
+            <h1>LoaderLab</h1>
+            <p>The Ultimate CSS & JS Loader Collection</p>
+        </div>
+        
+        <div class="github-actions">
+            <a href="https://github.com/mariorazo97/loaderlab" target="_blank" class="gh-btn">
+                <i class="fa-regular fa-star"></i> Star
+            </a>
+            <a href="https://github.com/mariorazo97/loaderlab/fork" target="_blank" class="gh-btn">
+                <i class="fa-solid fa-code-branch"></i> Fork
+            </a>
+        </div>
+    </header>
+
+    <div class="gallery">
+        <div class="card" data-id="1" data-title="Gradient Spin">
+            <span class="tier-badge tier-1">Level 1</span>
+            <h3>Gradient Spin</h3>
+            <div class="preview-box">
+                <div class="loader-ring"></div>
+            </div>
+            <button class="check-btn">Check it out!</button>
+        </div>
+
+        <div class="card" data-id="2" data-title="Bouncing Dots">
+            <span class="tier-badge tier-1">Level 1</span>
+            <h3>Bouncing Dots</h3>
+            <div class="preview-box">
+                <div class="loader-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+            </div>
+            <button class="check-btn">Check it out!</button>
+        </div>
+
+        <div class="card" data-id="3" data-title="Gooey Kinetic">
+            <span class="tier-badge tier-2">Level 2</span>
+            <h3>Gooey Kinetic</h3>
+            <div class="preview-box">
+                <div class="gooey-container">
+                    <div class="gooey-dot"></div><div class="gooey-dot"></div><div class="gooey-dot"></div><div class="gooey-dot"></div><div class="gooey-dot"></div>
+                </div>
+            </div>
+            <button class="check-btn">Check it out!</button>
+        </div>
+
+        <div class="card" data-id="4" data-title="Liquid Morph">
+            <span class="tier-badge tier-2">Level 2</span>
+            <h3>Liquid Morph</h3>
+            <div class="preview-box">
+                <div class="liquid-morph"></div>
+            </div>
+            <button class="check-btn">Check it out!</button>
+        </div>
+
+        <div class="card" data-id="5" data-title="3D Tesseract">
+            <span class="tier-badge tier-3">Level 3</span>
+            <h3>3D Tesseract</h3>
+            <div class="preview-box">
+                <div class="scene">
+                    <div class="cube">
+                        <div class="face front"></div><div class="face back"></div><div class="face right"></div>
+                        <div class="face left"></div><div class="face top"></div><div class="face bottom"></div>
+                        <div class="inner-cube"></div>
+                    </div>
+                </div>
+            </div>
+            <button class="check-btn">Check it out!</button>
+        </div>
+
+        <div class="card" data-id="6" data-title="Neural Network">
+            <span class="tier-badge tier-3">Level 3</span>
+            <h3>Neural Network</h3>
+            <div class="preview-box">
+                <canvas id="networkLoader" width="120" height="120"></canvas>
+            </div>
+            <button class="check-btn">Check it out!</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            
+            <h2 id="modal-title" style="margin-bottom: 2rem;">Loader Title</h2>
+            
+            <div id="modal-loader-stage">
+                </div>
+
+            <div class="vote-controls">
+                <div class="modal-vote-count" id="modal-count">0</div>
+                <button class="big-vote-btn" id="modal-vote-btn">
+                    <i class="fa-solid fa-heart"></i> Vote
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Voting Logic
+        let activeLoaderId = null;
+
+        // Initialize Votes
+        document.addEventListener('DOMContentLoaded', () => {
+            animateNetwork(); // Start Canvas animation
+        });
+
+        function getVotes(id) {
+            return localStorage.getItem(`vote_${id}`) || Math.floor(Math.random() * 100) + 10;
+        }
+
+        // Open Modal Logic
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalStage = document.getElementById('modal-loader-stage');
+        const modalCount = document.getElementById('modal-count');
+        const voteBtn = document.getElementById('modal-vote-btn');
+
+        document.querySelectorAll('.check-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const card = e.target.closest('.card');
+                activeLoaderId = card.dataset.id;
+                const title = card.dataset.title;
+                const loaderHtml = card.querySelector('.preview-box').innerHTML;
+
+                // Populate Modal
+                modalTitle.innerText = title;
+                modalStage.innerHTML = loaderHtml;
+                modalCount.innerText = getVotes(activeLoaderId);
+                
+                // Fix Canvas for Loader 6
+                if(activeLoaderId === '6') {
+                    const originalCanvas = document.getElementById('networkLoader');
+                    // Re-initialize canvas logic for the modal instance if needed, 
+                    // but for simplicity we just show it in the grid. 
+                    // Cloning canvas context is tricky, so we'll just re-append the specific canvas
+                    modalStage.innerHTML = '';
+                    modalStage.appendChild(originalCanvas); 
+                }
+
+                modal.classList.add('active');
+            });
+        });
+
+        function closeModal() {
+            modal.classList.remove('active');
+            // If we moved the canvas, put it back
+            if(activeLoaderId === '6') {
+                const card = document.querySelector('.card[data-id="6"] .preview-box');
+                card.appendChild(document.getElementById('networkLoader'));
+            }
+            activeLoaderId = null;
+        }
+
+        // Handle Vote Click
+        voteBtn.addEventListener('click', () => {
+            if(!activeLoaderId) return;
+
+            let current = parseInt(modalCount.innerText);
+            let newCount = current + 1;
+            localStorage.setItem(`vote_${activeLoaderId}`, newCount);
+            modalCount.innerText = newCount;
+
+            voteBtn.innerHTML = '<i class="fa-solid fa-check"></i> Thanks!';
+            voteBtn.style.background = '#10b981'; // Green
+            
+            setTimeout(() => {
+                voteBtn.innerHTML = '<i class="fa-solid fa-heart"></i> Vote';
+                voteBtn.style.background = ''; // Reset to gradient
+            }, 1500);
+        });
+
+        // Close modal on outside click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        /* =========================
+           CANVAS ANIMATION (Loader 6)
+           ========================= */
+        const canvas = document.getElementById('networkLoader');
+        const ctx = canvas.getContext('2d');
+        const particles = [];
+        
+        for(let i=0; i<20; i++) {
+            particles.push({
+                x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 1.5, vy: (Math.random() - 0.5) * 1.5,
+                size: Math.random() * 3 + 1
+            });
+        }
+
+        function animateNetwork() {
+            ctx.fillStyle = 'rgba(248, 250, 252, 0.3)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                ctx.fillStyle = '#1a1a1a'; ctx.fill();
+
+                for(let j=i+1; j<particles.length; j++) {
+                    const p2 = particles[j];
+                    const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if(dist < 40) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(0, 0, 0, ${1 - dist/40})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animateNetwork);
+        }
+    </script>
+</body>
+</html>
